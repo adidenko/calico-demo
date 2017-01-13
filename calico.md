@@ -15,7 +15,7 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
 ### On kubernetes cluster:
 
 - **[Felix, BGP]** Every k8s worker node runs `calico-node` container
-- **[The Orchestrator plugin]** Every k8s worker node runs `kubelet` `cni`:
+- **[The Orchestrator plugin]** Every k8s worker node runs `kubelet` with `cni`
   ```
   kubelet ...  --network-plugin=cni --network-plugin-dir=/etc/cni/net.d
   ```

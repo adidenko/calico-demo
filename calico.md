@@ -21,7 +21,7 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
   kubelet ...  --network-plugin=cni --network-plugin-dir=/etc/cni/net.d
   ```
 
-  K8s knows nothing about `calico` or network topology, it simply runs CNI plugin via exec.
+  K8s knows nothing about `calico` or network topology, it simply runs CNI plugin via exec when it creates new workload.
   CNI config is `/etc/cni/net.d/10-calico.conf`
 - **[etcd]** Etcd cluster is required for k8s and calico, so it's installed along with those.
 

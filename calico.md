@@ -51,6 +51,21 @@ Runs the following processes in a privileged hostnet=true container:
 1. **[kubelet]** creates a container for POD
 
 2. **[kubelet]** runs CNI plugin (`/opt/cni/bin/calico`)
+
+  ```
+  CNI_ARGS='
+    IgnoreUnknown=1;
+    K8S_POD_NAMESPACE=default;
+    K8S_POD_NAME=nginx1-137666357-jdgyu;
+    K8S_POD_INFRA_CONTAINER_ID=df3c4ad4098f632c764e8d6013b08c37d22d92ca981da45d42ea82bbf6189106
+  '
+  CNI_COMMAND=ADD
+  CNI_CONTAINERID=df3c4ad4098f632c764e8d6013b08c37d22d92ca981da45d42ea82bbf6189106
+  CNI_IFNAME=eth0
+  CNI_NETNS=/proc/28685/ns/net
+  CNI_PATH=/opt/cni/bin:/opt/calico/bin
+  /opt/cni/bin/calico
+  ```
     
 3. **[calico-cni]** There's no existing endpoint, so we need to do the following:
 

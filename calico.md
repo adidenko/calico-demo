@@ -44,9 +44,8 @@ Runs the following processes in a privileged hostnet=true container:
   There's no existing endpoint, so we need to do the following:
 
   1. Call the configured IPAM plugin to get IP address(es)
-  ```
-  /opt/cni/bin/calico-ipam
-  ```
+    
+    * `/opt/cni/bin/calico-ipam`
 
   2. Configure the Calico endpoint
 
@@ -54,29 +53,25 @@ Runs the following processes in a privileged hostnet=true container:
 
   3. Create the veth, configuring it on both the host and container namespace.
 
-    * create veth pair in container namespace (via netlink Go library which uses syscalls):
+    * Create veth pair in container namespace (via netlink Go library which uses syscalls):
       ```
       cali69829ecd4bd <---> eth0
       ```  
-    * create the routes inside the namespace, first for IPv4 then IPv6
+    * Create the routes inside the namespace, first for IPv4 then IPv6
       For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
+
       ```
       169.254.1.1 dev eth0  scope link
       default via 169.254.1.1 dev eth0
       ```  
-    * move the "host" end of the veth (`cali*` interface) into the host namespace
+    * Move the "host" end of the veth (`cali*` interface) into the host namespace
 
-3. kubelet gets info about POD IP address
-```
-  /usr/bin/nsenter -t 5833 -n -F -- /sbin/ethtool --statistics eth0
-  /usr/bin/nsenter --net=/proc/5833/ns/net -F -- ip -o -4 addr show dev eth0 scope global
-```
-4. [calico-node] calico-felix/calico-iptables-plugin sets up arp and routing
+3. [calico-node] calico-felix/calico-iptables-plugin sets up arp and routing
 ```
   /sbin/arp -s 10.233.97.132 d2:cc:f0:3e:b5:d9 -i cali69829ecd4bd
   /sbin/ip route replace 10.233.97.132 dev cali69829ecd4bd
 ```
-5. [calico-node] calico-felix configures the various proc file system parameters for the interface for IPv4:
+4. [calico-node] calico-felix configures the various proc file system parameters for the interface for IPv4:
 
   * Allow packets from controlled interfaces to be directed to localhost
   * Enable proxy ARP (responding to workload ARP requests with the host MAC)
@@ -87,3 +82,9 @@ Runs the following processes in a privileged hostnet=true container:
   1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
   0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
 ```
+5. kubelet gets info about POD IP address
+```
+  /usr/bin/nsenter -t 5833 -n -F -- /sbin/ethtool --statistics eth0
+  /usr/bin/nsenter --net=/proc/5833/ns/net -F -- ip -o -4 addr show dev eth0 scope global
+```
+

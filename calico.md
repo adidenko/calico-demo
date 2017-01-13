@@ -37,35 +37,34 @@ Runs the following processes in a privileged hostnet=true container:
 
 ### Step-by-step
 
-# kubelet creates a container for POD
+1. kubelet creates a container for POD
 
-# kubelet runs CNI plugin
+2. kubelet runs CNI plugin
 
-  /opt/cni/bin/calico
+  * `/opt/cni/bin/calico`
       
     There's no existing endpoint, so we need to do the following:
+    1. Call the configured IPAM plugin to get IP address(es)
+    ```
+    /opt/cni/bin/calico-ipam
+    ```
+    2. Configure the Calico endpoint
   
-    1) Call the configured IPAM plugin to get IP address(es)
+      * update etcd DB
   
-      /opt/cni/bin/calico-ipam
+    3. Create the veth, configuring it on both the host and container namespace.
   
-    2) Configure the Calico endpoint
-  
-      - update etcd DB
-  
-    3) Create the veth, configuring it on both the host and container namespace.
-  
-      - create veth pair in container namespace (via netlink Go library which uses syscalls):
-```
-cali69829ecd4bd <---> eth0
-```  
-      - create the routes inside the namespace, first for IPv4 then IPv6
+      * create veth pair in container namespace (via netlink Go library which uses syscalls):
+      ```
+      cali69829ecd4bd <---> eth0
+      ```  
+      * create the routes inside the namespace, first for IPv4 then IPv6
         For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
-
-          169.254.1.1 dev eth0  scope link
-          default via 169.254.1.1 dev eth0
-  
-      - move the "host" end of the veth (cali* interface) into the host namespace
+        ```
+        169.254.1.1 dev eth0  scope link
+        default via 169.254.1.1 dev eth0
+        ```  
+      * move the "host" end of the veth (cali* interface) into the host namespace
 
 # kubelet gets info about POD IP address
 ```

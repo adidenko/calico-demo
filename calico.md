@@ -7,19 +7,21 @@ Calico for Kubernetes
 
 http://docs.projectcalico.org/v2.0/reference/architecture/
 
-- Felix, the primary Calico agent that runs on each machine that hosts endpoints.
-- BGP client that distributes routing information.
-- The Orchestrator plugin, orchestrator-specific code that tightly integrates Calico into that orchestrator.
-- etcd, the data store.
+- **Felix**, the primary Calico agent that runs on each machine that hosts endpoints.
+- **BGP** client that distributes routing information.
+- **The Orchestrator plugin**, orchestrator-specific code that tightly integrates Calico into that orchestrator.
+- **etcd**, the data store.
 
 ### On kubernetes cluster:
 
-- [Felix, BGP] Every k8s worker node runs `calico-node` container
-- [The Orchestrator plugin] Every k8s worker node runs `kubelet + cni`:
-    --network-plugin=cni --network-plugin-dir=/etc/cni/net.d
+- **[Felix, BGP]** Every k8s worker node runs `calico-node` container
+- **[The Orchestrator plugin]** Every k8s worker node runs `kubelet` `cni`:
+  ```
+  kubelet ...  --network-plugin=cni --network-plugin-dir=/etc/cni/net.d
+  ```
   K8s knows nothing about `calico` or network topology, it simply runs CNI plugin via exec.
-  CNI config is /etc/cni/net.d/10-calico.conf
-- [etcd] Etcd cluster is required for k8s and calico, so it's installed along with those.
+  CNI config is `/etc/cni/net.d/10-calico.conf`
+- **[etcd]** Etcd cluster is required for k8s and calico, so it's installed along with those.
 
 
 ### Anatomy of a calico-node container
@@ -77,12 +79,12 @@ Runs the following processes in a privileged hostnet=true container:
   * Allow packets from controlled interfaces to be directed to localhost
   * Enable proxy ARP (responding to workload ARP requests with the host MAC)
   * Enable the kernel's RPF check.
-  ```
-  1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
-  1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
-  1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
-  0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
-  ```
+    ```
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
+    0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
+    ```
 6. **[kubelet]** gets info about POD IP address
   ```
   /usr/bin/nsenter -t 5833 -n -F -- /sbin/ethtool --statistics eth0

@@ -1,6 +1,11 @@
 Calico for Kubernetes
 =====================
 
+## Versions
+
+* Calico v2.0
+* Kubernetes v1.4.6
+
 ## Architecture:
 
 ### Introduction
@@ -63,7 +68,7 @@ Runs the following processes in a privileged hostnet=true container:
       cali69829ecd4bd <---> eth0
       ```
 
-    * Create the routes inside the namespace, first for IPv4 then IPv6
+    * Create the routes inside the namespace, first for IPv4 then IPv6.
       For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
 
       ```

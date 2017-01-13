@@ -95,7 +95,7 @@ Runs the following processes in a privileged hostnet=true container:
     * Create veth pair in container namespace (via netlink Go library which uses syscalls):
 
       ```
-      cali69829ecd4bd <---> eth0
+      eth0 <---> cali69829ecd4bd
       ```
 
     * Create the routes inside the namespace, first for IPv4 then IPv6.
@@ -104,7 +104,9 @@ Runs the following processes in a privileged hostnet=true container:
       ```
       169.254.1.1 dev eth0  scope link
       default via 169.254.1.1 dev eth0
-      ```  
+      ```
+
+    * Add IP address to eth0 interface in the namespace
 
     * Move the "host" end of the veth (`cali*` interface) into the host namespace
 

@@ -21,7 +21,19 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
 
 ### On kubernetes cluster:
 
-- **[Felix, BGP]** Every k8s worker node runs `calico-node` container
+- **[Felix, BGP]** Every k8s worker node runs `calico-node` container. Each node gets a /26 network from calico IP pool, BGP exports this route to neighbors
+
+  ```
+  docker exec -t -i calico-node cat /etc/calico/confd/config/bird_aggr.cfg
+  docker exec -t -i calico-node cat /etc/calico/confd/config/bird_ipam.cfg
+  docker exec -t -i calico-node cat /etc/calico/confd/config/bird.cfg
+
+  ip ro | grep bird
+    10.233.71.0/26 via 10.210.1.13 dev eth2  proto bird 
+    10.233.74.64/26 via 10.210.1.14 dev eth2  proto bird 
+    blackhole 10.233.97.128/26  proto bird 
+  ```
+
 - **[The Orchestrator plugin]** Every k8s worker node runs `kubelet` with `cni`
 
   ```
@@ -30,6 +42,7 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
 
   K8s knows nothing about `calico` or network topology, it simply runs CNI plugin via exec when it creates new workload.
   CNI config is `/etc/cni/net.d/10-calico.conf`
+
 - **[etcd]** Etcd cluster is required for k8s and calico, so it's installed along with those.
 
 

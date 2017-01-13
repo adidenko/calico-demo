@@ -55,9 +55,9 @@ Runs the following processes in a privileged hostnet=true container:
   3. Create the veth, configuring it on both the host and container namespace.
 
     * create veth pair in container namespace (via netlink Go library which uses syscalls):
-    ```
-    cali69829ecd4bd <---> eth0
-    ```  
+      ```
+      cali69829ecd4bd <---> eth0
+      ```  
     * create the routes inside the namespace, first for IPv4 then IPv6
       For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
       ```

@@ -37,11 +37,11 @@ Runs the following processes in a privileged hostnet=true container:
 
 ### Step-by-step
 
-1. *[kubelet]* creates a container for POD
+1. **[kubelet]** creates a container for POD
 
-2. *[kubelet]* runs CNI plugin (`/opt/cni/bin/calico`)
+2. **[kubelet]** runs CNI plugin (`/opt/cni/bin/calico`)
     
-  *[calico-cni]* There's no existing endpoint, so we need to do the following:
+  **[calico-cni]** There's no existing endpoint, so we need to do the following:
 
   1. Call the configured IPAM plugin to get IP address(es)
     
@@ -67,25 +67,25 @@ Runs the following processes in a privileged hostnet=true container:
 
     * Move the "host" end of the veth (`cali*` interface) into the host namespace
 
-3. *[calico-node]* calico-felix/calico-iptables-plugin sets up arp and routing
-```
+3. **[calico-node]** calico-felix/calico-iptables-plugin sets up arp and routing
+  ```
   /sbin/arp -s 10.233.97.132 d2:cc:f0:3e:b5:d9 -i cali69829ecd4bd
   /sbin/ip route replace 10.233.97.132 dev cali69829ecd4bd
-```
-4. *[calico-node]* calico-felix configures the various proc file system parameters for the interface for IPv4:
+  ```
+4. **[calico-node]** calico-felix configures the various proc file system parameters for the interface for IPv4:
 
   * Allow packets from controlled interfaces to be directed to localhost
   * Enable proxy ARP (responding to workload ARP requests with the host MAC)
   * Enable the kernel's RPF check.
-```
+  ```
   1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
   1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
   1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
   0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
-```
-5. *[kubelet]* gets info about POD IP address
-```
+  ```
+5. **[kubelet]** gets info about POD IP address
+  ```
   /usr/bin/nsenter -t 5833 -n -F -- /sbin/ethtool --statistics eth0
   /usr/bin/nsenter --net=/proc/5833/ns/net -F -- ip -o -4 addr show dev eth0 scope global
-```
+  ```
 

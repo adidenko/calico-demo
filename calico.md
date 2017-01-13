@@ -16,9 +16,11 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
 
 - **[Felix, BGP]** Every k8s worker node runs `calico-node` container
 - **[The Orchestrator plugin]** Every k8s worker node runs `kubelet` with `cni`
+
   ```
   kubelet ...  --network-plugin=cni --network-plugin-dir=/etc/cni/net.d
   ```
+
   K8s knows nothing about `calico` or network topology, it simply runs CNI plugin via exec.
   CNI config is `/etc/cni/net.d/10-calico.conf`
 - **[etcd]** Etcd cluster is required for k8s and calico, so it's installed along with those.
@@ -56,12 +58,14 @@ Runs the following processes in a privileged hostnet=true container:
   3. Create the veth, configuring it on both the host and container namespace.
 
     * Create veth pair in container namespace (via netlink Go library which uses syscalls):
+
       ```
       cali69829ecd4bd <---> eth0
       ```
 
     * Create the routes inside the namespace, first for IPv4 then IPv6
       For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
+
       ```
       169.254.1.1 dev eth0  scope link
       default via 169.254.1.1 dev eth0
@@ -70,22 +74,27 @@ Runs the following processes in a privileged hostnet=true container:
     * Move the "host" end of the veth (`cali*` interface) into the host namespace
 
 4. **[calico-node]** calico-felix/calico-iptables-plugin sets up arp and routing
+
   ```
   /sbin/arp -s 10.233.97.132 d2:cc:f0:3e:b5:d9 -i cali69829ecd4bd
   /sbin/ip route replace 10.233.97.132 dev cali69829ecd4bd
   ```
+
 5. **[calico-node]** calico-felix configures the various proc file system parameters for the interface for IPv4:
 
   * Allow packets from controlled interfaces to be directed to localhost
   * Enable proxy ARP (responding to workload ARP requests with the host MAC)
   * Enable the kernel's RPF check.
+
     ```
     1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
     1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
     1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
     0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
     ```
+
 6. **[kubelet]** gets info about POD IP address
+
   ```
   /usr/bin/nsenter -t 5833 -n -F -- /sbin/ethtool --statistics eth0
   /usr/bin/nsenter --net=/proc/5833/ns/net -F -- ip -o -4 addr show dev eth0 scope global

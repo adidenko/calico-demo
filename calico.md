@@ -8,6 +8,8 @@ Calico for Kubernetes
 
 ## Architecture:
 
+![architecture](https://github.com/projectcalico/calico/raw/master/images/lifecycle/calicoctl_node.png)
+
 ### Introduction
 
 http://docs.projectcalico.org/v2.0/reference/architecture/
@@ -105,3 +107,8 @@ Runs the following processes in a privileged hostnet=true container:
   /usr/bin/nsenter --net=/proc/5833/ns/net -F -- ip -o -4 addr show dev eth0 scope global
   ```
 
+### Datapath
+
+http://docs.projectcalico.org/v2.0/reference/architecture/data-path
+
+![datapath](https://github.com/projectcalico/calico/raw/master/images/calico-datapath.png)

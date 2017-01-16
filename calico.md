@@ -24,6 +24,9 @@ http://docs.projectcalico.org/v2.0/reference/architecture/
 - **[Felix, BGP]** Every k8s worker node runs `calico-node` container. Each node gets a /26 network from calico IP pool, BGP exports this route to neighbors
 
   ```
+  export ETCDCTL_ENDPOINT=https://localhost:2379
+  etcdctl ls /calico/ -r | grep 'host/.*/ipv4/block/'
+
   docker exec -t -i calico-node cat /etc/calico/confd/config/bird_aggr.cfg
   docker exec -t -i calico-node cat /etc/calico/confd/config/bird_ipam.cfg
   docker exec -t -i calico-node cat /etc/calico/confd/config/bird.cfg

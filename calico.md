@@ -85,33 +85,33 @@ Runs the following processes in a privileged hostnet=true container:
 
 3. **[calico-cni]** There's no existing endpoint, so we need to do the following:
 
-  1) Call the configured IPAM plugin to get IP address(es)
+    1. Call the configured IPAM plugin to get IP address(es)
 
-    * `/opt/cni/bin/calico-ipam`
+        * `/opt/cni/bin/calico-ipam`
 
-  2) Configure the Calico endpoint
+    2. Configure the Calico endpoint
 
-    * update etcd DB
+        * update etcd DB
 
-  3) Create the veth, configuring it on both the host and container namespace.
+    3. Create the veth, configuring it on both the host and container namespace.
 
-    * Create veth pair in container namespace (via netlink Go library which uses syscalls):
+        * Create veth pair in container namespace (via netlink Go library which uses syscalls):
 
-      ```
-      eth0 <---> cali69829ecd4bd
-      ```
+          ```
+          eth0 <---> cali69829ecd4bd
+          ```
 
-    * Create the routes inside the namespace, first for IPv4 then IPv6.
-      For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
+        * Create the routes inside the namespace, first for IPv4 then IPv6.
+          For IPv4 add a connected route to a dummy next hop (/32 mask) so that a default route can be set:
 
-      ```
-      169.254.1.1 dev eth0  scope link
-      default via 169.254.1.1 dev eth0
-      ```
+          ```
+          169.254.1.1 dev eth0  scope link
+          default via 169.254.1.1 dev eth0
+          ```
 
-    * Add IP address to eth0 interface in the namespace
+        * Add IP address to eth0 interface in the namespace
 
-    * Move the "host" end of the veth (`cali*` interface) into the host namespace
+        * Move the "host" end of the veth (`cali*` interface) into the host namespace
 
 4. **[calico-node]** calico-felix/calico-iptables-plugin sets up arp and routing
 

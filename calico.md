@@ -82,18 +82,18 @@ Runs the following processes in a privileged hostnet=true container:
   CNI_PATH=/opt/cni/bin:/opt/calico/bin
   /opt/cni/bin/calico
   ```
-    
+
 3. **[calico-cni]** There's no existing endpoint, so we need to do the following:
 
-  1. Call the configured IPAM plugin to get IP address(es)
-    
+  1) Call the configured IPAM plugin to get IP address(es)
+
     * `/opt/cni/bin/calico-ipam`
 
-  2. Configure the Calico endpoint
+  2) Configure the Calico endpoint
 
     * update etcd DB
 
-  3. Create the veth, configuring it on both the host and container namespace.
+  3) Create the veth, configuring it on both the host and container namespace.
 
     * Create veth pair in container namespace (via netlink Go library which uses syscalls):
 

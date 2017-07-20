@@ -126,12 +126,12 @@ Runs the following processes in a privileged hostnet=true container:
     * Enable proxy ARP (responding to workload ARP requests with the host MAC)
     * Enable the kernel's RPF check.
 
-      ```
-      1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
-      1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
-      1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
-      0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
-      ```
+    ```
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/rp_filter
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/route_localnet
+    1 > /proc/sys/net/ipv4/conf/cali69829ecd4bd/proxy_arp
+    0 > /proc/sys/net/ipv4/neigh/cali69829ecd4bd/proxy_delay
+    ```
 
 6. **[kubelet]** gets info about POD IP address
 
